@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface EmploymentWorkingTimeRepository extends JpaRepository<EmploymentWorkingTimeEntity, Integer>{
-//    List<EmploymentWorkingTimeEntity> findByEmployment(EmploymentEntity employment);
     void deleteByEmployment(EmploymentEntity employment);
+
+    List<EmploymentWorkingTimeEntity> findByEmployment_Personal(int personalId);
 }

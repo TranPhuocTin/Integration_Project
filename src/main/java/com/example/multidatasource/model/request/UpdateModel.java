@@ -1,7 +1,5 @@
-package com.example.multidatasource.dto;
+package com.example.multidatasource.model.request;
 
-import com.example.multidatasource.entity.mysql.PayRateEntity;
-import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MergeDTO {
+public class UpdateModel {
     private int personalId;
     private String currentFirstName;
     private String currentLastName;

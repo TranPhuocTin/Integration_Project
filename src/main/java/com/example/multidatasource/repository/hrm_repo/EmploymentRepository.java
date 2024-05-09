@@ -9,7 +9,4 @@ import java.util.List;
 
 @Repository
 public interface EmploymentRepository extends JpaRepository<EmploymentEntity, Integer> {
-//    void deleteByPersonal(PersonalEntity personalEntity);
-//
-//    List<EmploymentEntity> findByPersonal(PersonalEntity personalEntity);
 }

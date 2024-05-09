@@ -41,10 +41,6 @@ public class EmploymentEntity {
 
     @Column(name = "NUMBER_DAYS_REQUIREMENT_OF_WORKING_PER_MONTH")
     private Long numberDaysRequirementOfWorkingPerMonth;
-//
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "PERSONAL_ID")
-//    private PersonalEntity personal;
 
     @Column(name = "PERSONAL_ID")
     private int personal;

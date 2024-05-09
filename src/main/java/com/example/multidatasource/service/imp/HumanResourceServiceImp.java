@@ -21,39 +21,22 @@ import java.util.List;
 @Service
 public class HumanResourceServiceImp implements HumanResourceService {
 
-//    @Autowired
-//    PersonalRepository personalRepo;
+    private final EmploymentWorkingTimeRepository employmentWorkingTimeRepo;
+    private final JobHistoryRepository jobHistoryRepo;
+    private final EmploymentRepository employmentRepo;
+    private final PersonalRepository personalRepo;
 
     @Autowired
-    EmploymentWorkingTimeRepository employmentWorkingTimeRepo;
-
-    @Autowired
-    JobHistoryRepository jobHistoryRepo;
-
-    @Autowired
-    EmploymentRepository employmentRepo;
-
-    @Autowired
-    PersonalRepository personalRepo;
+    public HumanResourceServiceImp(EmploymentWorkingTimeRepository employmentWorkingTimeRepo, JobHistoryRepository jobHistoryRepo, EmploymentRepository employmentRepo, PersonalRepository personalRepo) {
+        this.employmentWorkingTimeRepo = employmentWorkingTimeRepo;
+        this.jobHistoryRepo = jobHistoryRepo;
+        this.employmentRepo = employmentRepo;
+        this.personalRepo = personalRepo;
+    }
 
     @Override
     public List<PersonalEntity> getAllPersonals(){
         return personalRepo.findAll();
-    }
-
-    @Override
-    public List<JobHistoryEntity> getAllJobHistories() {
-        return jobHistoryRepo.findAll();
-    }
-
-    @Override
-    public List<EmploymentEntity> getAllEmployments() {
-        return employmentRepo.findAll();
-    }
-
-    @Override
-    public List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTimes() {
-        return employmentWorkingTimeRepo.findAll();
     }
 
     @Override
@@ -85,6 +68,16 @@ public class HumanResourceServiceImp implements HumanResourceService {
     @Transactional(value = "sqlServerTransactionManager", rollbackFor = Exception.class)
     public void updatePersonal(PersonalEntity personal) {
         personalRepo.save(personal);
+    }
+
+    @Override
+    public List<JobHistoryEntity> findJobHistoryByPersonalId(int id) {
+        return jobHistoryRepo.findByEmployment_Personal(id);
+    }
+
+    @Override
+    public List<EmploymentWorkingTimeEntity> findEmploymentWorkingTimeByPersonalId(int id) {
+        return employmentWorkingTimeRepo.findByEmployment_Personal(id);
     }
 
 }

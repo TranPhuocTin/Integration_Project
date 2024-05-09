@@ -6,13 +6,14 @@ import java.util.List;
 
 public interface HumanResourceService {
     List<PersonalEntity> getAllPersonals();
-    List<JobHistoryEntity> getAllJobHistories();
-    List<EmploymentEntity> getAllEmployments();
-    List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTimes();
 
     PersonalEntity getPersonalById(int id);
 
     String deletePersonalById(int id);
 
     void updatePersonal(PersonalEntity personal);
+
+    List<JobHistoryEntity> findJobHistoryByPersonalId(int id);
+
+    List<EmploymentWorkingTimeEntity> findEmploymentWorkingTimeByPersonalId(int id);
 }

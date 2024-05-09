@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PersonalRepository extends JpaRepository<PersonalEntity, Integer> {
-    List<PersonalEntity> findByCurrentGender(String gender);
     void deleteByPersonalId(int personalId);
 }

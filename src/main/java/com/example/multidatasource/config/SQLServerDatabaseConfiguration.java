@@ -7,7 +7,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -16,7 +15,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
@@ -55,11 +53,7 @@ public class SQLServerDatabaseConfiguration {
         return new JpaTransactionManager(sqlServerEntityManagerFactory);
     }
 
-    @Bean(name = "chainedTransactionManager")
-    public ChainedTransactionManager transactionManager(@Qualifier("mysqlTransactionManager") PlatformTransactionManager sqlServerTransactionManager,
-                                                        @Qualifier("sqlServerTransactionManager") PlatformTransactionManager mysqlTransactionManager) {
-        return new ChainedTransactionManager();
-    }
+
 
     private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();

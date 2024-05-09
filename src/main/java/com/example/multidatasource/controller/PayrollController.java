@@ -14,9 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/payroll")
 public class PayrollController {
+    private final PayrollService employeeService;
     @Autowired
-    PayrollService employeeService;
+    public PayrollController(PayrollService employeeService) {
+        this.employeeService = employeeService;
+    }
 
+    //Get all employees
     @GetMapping("/get-all-employees")
     public List<EmployeeEntity> getAllEmployees(){
         return employeeService.getAllEmployees();

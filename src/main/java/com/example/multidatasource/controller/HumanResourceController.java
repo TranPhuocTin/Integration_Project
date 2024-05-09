@@ -7,6 +7,7 @@ import com.example.multidatasource.entity.sqlsever.PersonalEntity;
 import com.example.multidatasource.service.HumanResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,30 +16,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/human-resource")
 public class HumanResourceController {
+    private final HumanResourceService personalService;
     @Autowired
-    HumanResourceService personalService;
+    public HumanResourceController(HumanResourceService personalService) {
+        this.personalService = personalService;
+    }
 
-
+    //Get all personals in human resource
     @GetMapping("/get-all-personals")
     public List<PersonalEntity> getPersonal(){
         return personalService.getAllPersonals();
     }
 
-    //This method is used to get data from 2 tables in sqlsever database: job-history, employment
-    @GetMapping("/get-job-histories")
-    public List<JobHistoryEntity> getJobHistories(){
-        return personalService.getAllJobHistories();
+
+    //Get job history by personalid
+    @GetMapping("/get-job-history/{id}")
+    public List<JobHistoryEntity> getJobHistoryByPersonalId(@PathVariable int id){
+        return personalService.findJobHistoryByPersonalId(id);
     }
 
-    // This method is used to get data from 3 tables in sqlsever database: employment, personal, benefits-plan
-    @GetMapping("/get-employments")
-    public List<EmploymentEntity> getEmployments(){
-        return personalService.getAllEmployments();
+    //Get employment working time by personalid
+    @GetMapping("/get-employment-working-time/{id}")
+    public List<EmploymentWorkingTimeEntity> getEmploymentWorkingTimeByPersonalId(@PathVariable int id){
+        return personalService.findEmploymentWorkingTimeByPersonalId(id);
     }
 
-    //This method is used to get data from 3 tables in sqlsever database: employment-working-time, employment, personal
-    @GetMapping("/get-all-employment-working-time")
-    public List<EmploymentWorkingTimeEntity> getEmploymentWorkingTime(){
-        return personalService.getAllEmploymentWorkingTimes();
-    }
 }

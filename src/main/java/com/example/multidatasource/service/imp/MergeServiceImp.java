@@ -1,6 +1,5 @@
 package com.example.multidatasource.service.imp;
 
-import com.example.multidatasource.dto.MergeDTO;
 import com.example.multidatasource.entity.merge.MergePerson;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.sqlsever.PersonalEntity;
@@ -10,7 +9,6 @@ import com.example.multidatasource.service.PayrollService;
 import com.example.multidatasource.service.MergeService;
 import com.example.multidatasource.service.HumanResourceService;
 //import jakarta.transaction.Transactional;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +21,18 @@ import java.util.List;
 @Service
 public class MergeServiceImp implements MergeService {
 
-    @Autowired
-    PayrollService payrollService;
+    private final PayrollService payrollService;
+    private final HumanResourceService humanResourceService;
+    private final PersonalRepository personalRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    HumanResourceService humanResourceService;
-
-    @Autowired
-    PersonalRepository personalRepository;
-
-    @Autowired
-    EmployeeRepository employeeRepository;
+    public MergeServiceImp(PayrollService payrollService, HumanResourceService humanResourceService, PersonalRepository personalRepository, EmployeeRepository employeeRepository) {
+        this.payrollService = payrollService;
+        this.humanResourceService = humanResourceService;
+        this.personalRepository = personalRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(MergeServiceImp.class);
 
@@ -72,7 +71,8 @@ public class MergeServiceImp implements MergeService {
 
         personalEntity.setPersonalId(id);
 
-        employeeEntityBuilder(mergePerson);
+        employeeEntity.setFirstName(mergePerson.getCurrentFirstName());
+        employeeEntity.setLastName(mergePerson.getCurrentLastName());
 
         try {
             humanResourceService.updatePersonal(personalEntity);
@@ -95,13 +95,6 @@ public class MergeServiceImp implements MergeService {
         } catch (Exception e) {
             return "Error deleting EmployeeEntity and PersonalEntity";
         }
-    }
-
-    EmployeeEntity employeeEntityBuilder(MergePerson mergePerson){
-        return EmployeeEntity.builder().idEmployee(mergePerson.getPersonalId())
-                .firstName(mergePerson.getCurrentFirstName())
-                .lastName(mergePerson.getCurrentLastName())
-                .build();
     }
 
     public MergePerson mergePersonBuilder(EmployeeEntity employeeEntity, PersonalEntity personalEntity){
@@ -129,7 +122,8 @@ public class MergeServiceImp implements MergeService {
                 .vacationDays(employeeEntity.getVacationDays())
                 .paidToDate(employeeEntity.getPaidToDate())
                 .paidLastYear(employeeEntity.getPaidLastYear())
-                .ssn(employeeEntity.getSsn())
-                .payRates(employeeEntity.getPayRates()).build();
+                .payRates(employeeEntity.getPayRates())
+                .employmentEntityList(personalEntity.getEmploymentEntityList()).
+                build();
     }
 }

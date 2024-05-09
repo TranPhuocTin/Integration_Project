@@ -11,8 +11,12 @@ import java.util.List;
 
 @Service
 public class PayrollServiceImp implements PayrollService {
+    private final EmployeeRepository employeeRepository;
+
     @Autowired
-    EmployeeRepository employeeRepository;
+    public PayrollServiceImp(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     @Override
     public List<EmployeeEntity> getAllEmployees() {
