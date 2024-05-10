@@ -1,6 +1,8 @@
 package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
+import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
+import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
 import com.example.multidatasource.service.PayrollService;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,7 @@ public class PayrollServiceImp implements PayrollService {
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public PayrollServiceImp(EmployeeRepository employeeRepository) {
+    public PayrollServiceImp(EmployeeRepository employeeRepository, EmploymentWorkingTimeRepository employmentWorkingTimeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
@@ -45,4 +47,5 @@ public class PayrollServiceImp implements PayrollService {
     public void updateEmployee(EmployeeEntity employee) {
         employeeRepository.save(employee);
     }
+
 }

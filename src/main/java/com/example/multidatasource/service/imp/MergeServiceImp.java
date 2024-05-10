@@ -97,6 +97,18 @@ public class MergeServiceImp implements MergeService {
         }
     }
 
+    @Override
+    public MergePerson getMergePersonById(int id) {
+        EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
+        PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
+
+        if (employeeEntity == null || personalEntity == null) {
+            return null;
+        }
+
+        return mergePersonBuilder(employeeEntity, personalEntity);
+    }
+
     public MergePerson mergePersonBuilder(EmployeeEntity employeeEntity, PersonalEntity personalEntity){
         return MergePerson.builder().personalId(personalEntity.getPersonalId())
                 .currentFirstName(personalEntity.getCurrentFirstName())

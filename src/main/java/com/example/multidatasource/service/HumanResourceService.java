@@ -16,4 +16,8 @@ public interface HumanResourceService {
     List<JobHistoryEntity> findJobHistoryByPersonalId(int id);
 
     List<EmploymentWorkingTimeEntity> findEmploymentWorkingTimeByPersonalId(int id);
+
+    List<JobHistoryEntity> getAllJobHistories();
+
+    List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTime();
 }

@@ -12,4 +12,5 @@ public interface JobHistoryRepository extends JpaRepository<JobHistoryEntity, In
     void deleteByEmployment(EmploymentEntity employment);
 
     List<JobHistoryEntity> findByEmployment_Personal(int personalId);
+    List<JobHistoryEntity> findAllBy();
 }

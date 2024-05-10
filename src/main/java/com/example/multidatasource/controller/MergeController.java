@@ -3,6 +3,7 @@ package com.example.multidatasource.controller;
 import com.example.multidatasource.model.request.UpdateModel;
 import com.example.multidatasource.entity.merge.MergePerson;
 import com.example.multidatasource.service.MergeService;
+import com.example.multidatasource.service.SocketService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,12 +17,13 @@ import java.util.List;
 @EnableWebSocket
 public class MergeController {
     private final MergeService mergeService;
-    private final SimpMessagingTemplate messagingTemplate;
+
+    private final SocketService socketService;
 
     @Autowired
-    public MergeController(MergeService mergeService, SimpMessagingTemplate messagingTemplate) {
+    public MergeController(MergeService mergeService, SocketService socketService) {
         this.mergeService = mergeService;
-        this.messagingTemplate = messagingTemplate;
+        this.socketService = socketService;
     }
 
     @GetMapping("/get-merge-person")
@@ -32,13 +34,13 @@ public class MergeController {
     //Fixing: the Personal entity doesn't have benefit plan id, logical failure
     @PostMapping("/update/{id}")
     public String updateMergePerson(@RequestBody UpdateModel updateModel, @PathVariable int id){
-        MergePerson mergePerson = new MergePerson();
+        MergePerson mergePerson = mergeService.getMergePersonById(id);
         mergePerson.setPersonalId(id);
         BeanUtils.copyProperties(updateModel, mergePerson);
         boolean result = mergeService.updateEmployeePersonal(mergePerson, id);
 //        Testing websocket
         if(result){
-                messagingTemplate.convertAndSend("/topic/merge", mergePerson);
+                socketService.sendMessage("/topic", mergePerson);
                 return "Update successfully";
         }
         return "Failed to update";

@@ -80,4 +80,14 @@ public class HumanResourceServiceImp implements HumanResourceService {
         return employmentWorkingTimeRepo.findByEmployment_Personal(id);
     }
 
+    @Override
+    public List<JobHistoryEntity> getAllJobHistories() {
+        return jobHistoryRepo.findAllBy();
+    }
+
+    @Override
+    public List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTime() {
+        return employmentWorkingTimeRepo.findAllBy();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.multidatasource.service;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
+import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
 
 import java.util.List;
 
@@ -11,5 +12,6 @@ public interface PayrollService {
     String deleteEmployeeById(int id);
 
     void updateEmployee(EmployeeEntity employee);
+
 }
 

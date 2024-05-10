@@ -11,4 +11,6 @@ public interface EmploymentWorkingTimeRepository extends JpaRepository<Employmen
     void deleteByEmployment(EmploymentEntity employment);
 
     List<EmploymentWorkingTimeEntity> findByEmployment_Personal(int personalId);
+
+    List<EmploymentWorkingTimeEntity> findAllBy();
 }

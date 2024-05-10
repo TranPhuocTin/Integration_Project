@@ -17,10 +17,6 @@ public class EmploymentWorkingTimeEntity {
     @Column(name = "EMPLOYMENT_WORKING_TIME_ID", nullable = false)
     private Long employmentWorkingTimeId;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "EMPLOYMENT_ID")
-    private EmploymentEntity employment;
-
     @Column(name = "YEAR_WORKING")
     private Date yearWorking;
 
@@ -32,4 +28,8 @@ public class EmploymentWorkingTimeEntity {
 
     @Column(name = "TOTAL_NUMBER_VACATION_WORKING_DAYS_PER_MONTH")
     private Integer totalNumberVacationWorkingDaysPerMonth;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "EMPLOYMENT_ID")
+    private EmploymentEntity employment;
 }

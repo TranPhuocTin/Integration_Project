@@ -8,4 +8,5 @@ public interface MergeService {
     List<MergePerson> mergeEmployeePersonal();
     boolean updateEmployeePersonal(MergePerson mergePerson, int id);
     String deleteEmployeePersonal(int id);
+    MergePerson getMergePersonById(int id); // New method
 }
