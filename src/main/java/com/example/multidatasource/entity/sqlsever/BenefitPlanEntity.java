@@ -24,7 +24,7 @@ public class BenefitPlanEntity {
     @Column(name = "BENEFIT_PLANS_ID", nullable = false)
     private int benefitPlansId;
 
-    @Column(name = "PLAN_NAME", length = 10)
+    @Column(name = "PLAN_NAME")
     private String planName;
 
     @Column(name = "DEDUCTABLE")

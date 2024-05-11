@@ -46,6 +46,4 @@ public class EmployeeEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "`Pay Rates_idPay Rates`")
     private PayRateEntity payRates;
-//    @Column(name = "`Pay Rates_idPay Rates`")
-//    private int payRates;
 }

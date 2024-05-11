@@ -13,6 +13,8 @@ public interface HumanResourceService {
 
     void updatePersonal(PersonalEntity personal);
 
+    boolean updateBenefitPlanByPersonalId(int personalId, BenefitPlanEntity benefitPlan);
+
     List<JobHistoryEntity> findJobHistoryByPersonalId(int id);
 
     List<EmploymentWorkingTimeEntity> findEmploymentWorkingTimeByPersonalId(int id);

@@ -2,6 +2,8 @@ package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.merge.MergePerson;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
+import com.example.multidatasource.entity.mysql.PayRateEntity;
+import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
 import com.example.multidatasource.entity.sqlsever.PersonalEntity;
 import com.example.multidatasource.repository.hrm_repo.PersonalRepository;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
@@ -83,10 +85,12 @@ public class MergeServiceImp implements MergeService {
         }
     }
 
+
+
     @Override
     public String deleteEmployeePersonal(int id) {
         if(personalRepository.findById(id).isEmpty() || employeeRepository.findById(id).isEmpty()){
-            return "EmployeeEntity or PersonalEntity not found";
+            return "Cannot find EmployeeEntity or PersonalEntity with id: " + id + " to delete";
         }
         try {
             humanResourceService.deletePersonalById(id);
@@ -107,6 +111,23 @@ public class MergeServiceImp implements MergeService {
         }
 
         return mergePersonBuilder(employeeEntity, personalEntity);
+    }
+
+    @Override
+    public boolean updateBenefitPlanPayrate(int id, BenefitPlanEntity benefitPlan, PayRateEntity payRate, double paidToDate, double paidLastYear) {
+        EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
+
+        employeeEntity.setPaidToDate(paidToDate);
+        employeeEntity.setPaidLastYear(paidLastYear);
+
+        try {
+            humanResourceService.updateBenefitPlanByPersonalId(id, benefitPlan);
+            payrollService.updateEmployee(employeeEntity);
+            payrollService.updatePayrateByEmployeeId(id, payRate);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public MergePerson mergePersonBuilder(EmployeeEntity employeeEntity, PersonalEntity personalEntity){

@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UpdateModel {
+public class UpdatePersonalDTO {
     private int personalId;
     private String currentFirstName;
     private String currentLastName;

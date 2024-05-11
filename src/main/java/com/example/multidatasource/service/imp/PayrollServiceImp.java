@@ -1,6 +1,7 @@
 package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
+import com.example.multidatasource.entity.mysql.PayRateEntity;
 import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
 import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
@@ -47,5 +48,18 @@ public class PayrollServiceImp implements PayrollService {
     public void updateEmployee(EmployeeEntity employee) {
         employeeRepository.save(employee);
     }
+
+    @Override
+    @Transactional(transactionManager="mysqlTransactionManager", rollbackFor = Exception.class)
+    public boolean updatePayrateByEmployeeId(int employeeId, PayRateEntity payRate) {
+        EmployeeEntity employee = employeeRepository.findByIdEmployee(employeeId);
+        if(employee == null){
+            return false;
+        }
+        employee.setPayRates(payRate);
+        employeeRepository.save(employee);
+        return true;
+    }
+
 
 }

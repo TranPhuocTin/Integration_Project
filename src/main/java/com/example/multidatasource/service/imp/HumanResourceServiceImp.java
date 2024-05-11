@@ -1,10 +1,7 @@
 package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
-import com.example.multidatasource.entity.sqlsever.EmploymentEntity;
-import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
-import com.example.multidatasource.entity.sqlsever.JobHistoryEntity;
-import com.example.multidatasource.entity.sqlsever.PersonalEntity;
+import com.example.multidatasource.entity.sqlsever.*;
 import com.example.multidatasource.repository.hrm_repo.EmploymentRepository;
 import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
 import com.example.multidatasource.repository.hrm_repo.JobHistoryRepository;
@@ -68,6 +65,18 @@ public class HumanResourceServiceImp implements HumanResourceService {
     @Transactional(value = "sqlServerTransactionManager", rollbackFor = Exception.class)
     public void updatePersonal(PersonalEntity personal) {
         personalRepo.save(personal);
+    }
+
+    @Override
+    @Transactional(value = "sqlServerTransactionManager", rollbackFor = Exception.class)
+    public boolean updateBenefitPlanByPersonalId(int personalId, BenefitPlanEntity benefitPlan) {
+        PersonalEntity personal = personalRepo.findByPersonalId(personalId);
+        if(personal != null){
+            personal.setBenefitPlan(benefitPlan);
+            personalRepo.save(personal);
+            return true;
+        }
+        return false;
     }
 
     @Override
