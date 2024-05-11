@@ -14,7 +14,7 @@ public class SocketServiceImp implements SocketService {
     }
 
     @Override
-    public void sendMessage(String topic, MergePerson payload) {
+    public void sendMessage(String topic, Object payload) {
         simpMessagingTemplate.convertAndSend(topic, payload);
     }
 }

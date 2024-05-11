@@ -4,13 +4,17 @@ import com.example.multidatasource.model.request.UpdateModel;
 import com.example.multidatasource.entity.merge.MergePerson;
 import com.example.multidatasource.service.MergeService;
 import com.example.multidatasource.service.SocketService;
+import lombok.extern.java.Log;
+import org.slf4j.ILoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/merge")
@@ -33,21 +37,26 @@ public class MergeController {
 
     //Fixing: the Personal entity doesn't have benefit plan id, logical failure
     @PostMapping("/update/{id}")
-    public String updateMergePerson(@RequestBody UpdateModel updateModel, @PathVariable int id){
-        MergePerson mergePerson = mergeService.getMergePersonById(id);
-        mergePerson.setPersonalId(id);
-        BeanUtils.copyProperties(updateModel, mergePerson);
-        boolean result = mergeService.updateEmployeePersonal(mergePerson, id);
-//        Testing websocket
-        if(result){
-                socketService.sendMessage("/topic", mergePerson);
-                return "Update successfully";
+    public ResponseEntity<?> updateMergePerson(@RequestBody UpdateModel updateModel, @PathVariable int id){
+        if(updateModel == null){
+            return ResponseEntity.badRequest().body("Invalid request");
         }
-        return "Failed to update";
+        else{
+            MergePerson mergePerson = mergeService.getMergePersonById(id);
+            BeanUtils.copyProperties(updateModel, mergePerson);
+            mergePerson.setPersonalId(id);
+            boolean result = mergeService.updateEmployeePersonal(mergePerson, id);
+            if(result){
+                List<MergePerson> mergePersonList = mergeService.mergeEmployeePersonal();
+                socketService.sendMessage("/topic/merge", mergePersonList);
+                return new ResponseEntity<>(mergePersonList, HttpStatus.OK);
+            }
+            return ResponseEntity.badRequest().body("Update failed");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteMergePerson(@PathVariable int id){
-        return mergeService.deleteEmployeePersonal(id);
+    public ResponseEntity<?> deleteMergePerson(@PathVariable int id){
+        return ResponseEntity.ok(mergeService.deleteEmployeePersonal(id));
     }
 }
