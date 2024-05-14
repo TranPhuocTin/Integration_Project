@@ -74,6 +74,6 @@ public class PersonalEntity {
     @JoinColumn(name = "BENEFIT_PLAN_ID")
     private BenefitPlanEntity benefitPlan;
 
-    @OneToMany(mappedBy = "personal", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "personal", cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<EmploymentEntity> employmentEntityList;
 }

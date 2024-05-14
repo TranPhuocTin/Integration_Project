@@ -12,12 +12,10 @@ import com.example.multidatasource.service.HumanResourceService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class HumanResourceServiceImp implements HumanResourceService {
-
     private final EmploymentWorkingTimeRepository employmentWorkingTimeRepo;
     private final JobHistoryRepository jobHistoryRepo;
     private final EmploymentRepository employmentRepo;
@@ -98,5 +96,49 @@ public class HumanResourceServiceImp implements HumanResourceService {
     public List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTime() {
         return employmentWorkingTimeRepo.findAllBy();
     }
+
+    @Override
+    public boolean updateEmployment(EmploymentEntity employment) {
+        employmentRepo.save(employment);
+        return true;
+    }
+
+    @Override
+    public EmploymentEntity findByEmploymentId(int id) {
+        return employmentRepo.findByEmploymentId(id);
+    }
+
+    @Override
+    public boolean updateJobHistory(JobHistoryEntity jobHistory) {
+        jobHistoryRepo.save(jobHistory);
+        return true;
+    }
+
+    @Override
+    public boolean updateEmploymentWorkingTime(EmploymentWorkingTimeEntity employmentWorkingTime) {
+        employmentWorkingTimeRepo.save(employmentWorkingTime);
+        return true;
+    }
+
+    @Override
+    public JobHistoryEntity findByJobHistoryId(Long id) {
+        return jobHistoryRepo.findByJobHistoryId(id);
+    }
+
+    @Override
+    public EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id) {
+        return employmentWorkingTimeRepo.findByEmploymentWorkingTimeId(id);
+    }
+
+    @Override
+    public EmploymentWorkingTimeEntity findEmploymentWorkingTimeByEmployment(EmploymentEntity employment) {
+        return employmentWorkingTimeRepo.findByEmployment(employment);
+    }
+
+    @Override
+    public JobHistoryEntity findJobHistoryByEmployment(EmploymentEntity employment) {
+        return jobHistoryRepo.findByEmployment(employment);
+    }
+
 
 }

@@ -22,4 +22,19 @@ public interface HumanResourceService {
     List<JobHistoryEntity> getAllJobHistories();
 
     List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTime();
+
+    boolean updateEmployment(EmploymentEntity employment);
+
+    EmploymentEntity findByEmploymentId(int id);
+
+    boolean updateJobHistory(JobHistoryEntity jobHistory);
+
+    boolean updateEmploymentWorkingTime(EmploymentWorkingTimeEntity employmentWorkingTime);
+
+    JobHistoryEntity findByJobHistoryId(Long id);
+
+    EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id);
+
+    EmploymentWorkingTimeEntity findEmploymentWorkingTimeByEmployment(EmploymentEntity employment);
+    JobHistoryEntity findJobHistoryByEmployment(EmploymentEntity employment);
 }

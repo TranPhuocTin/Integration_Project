@@ -1,6 +1,5 @@
 package com.example.multidatasource.service.imp;
 
-import com.example.multidatasource.entity.merge.MergePerson;
 import com.example.multidatasource.service.SocketService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -11,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @Table(name = "EMPLOYMENT")
 public class EmploymentEntity {
 
@@ -40,8 +42,9 @@ public class EmploymentEntity {
     private Date lastReviewDate;
 
     @Column(name = "NUMBER_DAYS_REQUIREMENT_OF_WORKING_PER_MONTH")
-    private Long numberDaysRequirementOfWorkingPerMonth;
+    private Integer numberDaysRequirementOfWorkingPerMonth;
 
     @Column(name = "PERSONAL_ID")
     private int personal;
+
 }

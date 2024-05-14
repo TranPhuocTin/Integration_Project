@@ -1,10 +1,13 @@
 package com.example.multidatasource.service.imp;
 
-import com.example.multidatasource.entity.merge.MergePerson;
+import com.example.multidatasource.entity.sqlsever.*;
+import com.example.multidatasource.payload.MergePersonDTO;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.mysql.PayRateEntity;
-import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
-import com.example.multidatasource.entity.sqlsever.PersonalEntity;
+import com.example.multidatasource.payload.UpdateEmploymentDetails;
+import com.example.multidatasource.repository.hrm_repo.EmploymentRepository;
+import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
+import com.example.multidatasource.repository.hrm_repo.JobHistoryRepository;
 import com.example.multidatasource.repository.hrm_repo.PersonalRepository;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
 import com.example.multidatasource.service.PayrollService;
@@ -19,35 +22,42 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MergeServiceImp implements MergeService {
-
+    private static final Logger logger = LoggerFactory.getLogger(MergeServiceImp.class);
     private final PayrollService payrollService;
     private final HumanResourceService humanResourceService;
     private final PersonalRepository personalRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmploymentWorkingTimeRepository employmentWorkingTimeRepository;
+    private final JobHistoryRepository jobHistoryRepository;
+    private final EmploymentRepository employmentRepository;
 
     @Autowired
-    public MergeServiceImp(PayrollService payrollService, HumanResourceService humanResourceService, PersonalRepository personalRepository, EmployeeRepository employeeRepository) {
+    public MergeServiceImp(PayrollService payrollService, HumanResourceService humanResourceService, PersonalRepository personalRepository, EmployeeRepository employeeRepository, EmploymentWorkingTimeRepository employmentWorkingTimeRepository, JobHistoryRepository jobHistoryRepository, EmploymentRepository employmentRepository) {
         this.payrollService = payrollService;
         this.humanResourceService = humanResourceService;
         this.personalRepository = personalRepository;
         this.employeeRepository = employeeRepository;
+        this.employmentWorkingTimeRepository = employmentWorkingTimeRepository;
+        this.jobHistoryRepository = jobHistoryRepository;
+        this.employmentRepository = employmentRepository;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(MergeServiceImp.class);
 
 
     @Override
-    public List<MergePerson> mergeEmployeePersonal() {
+    public List<MergePersonDTO> mergeEmployeePersonal() {
         List<EmployeeEntity> employeeEntities = payrollService.getAllEmployees();
         List<PersonalEntity> personalEntities = humanResourceService.getAllPersonals();
-        List<MergePerson> returnValue = new ArrayList<>();
+        List<MergePersonDTO> returnValue = new ArrayList<>();
         
 
         for (PersonalEntity personalEntity : personalEntities) {
-            MergePerson mergePerson = new MergePerson();
+            MergePersonDTO mergePersonDTO = new MergePersonDTO();
             // Find the corresponding EmployeeEntity
             EmployeeEntity matchingEmployeeEntity = employeeEntities.stream()
                     .filter(employeeEntity -> employeeEntity.getIdEmployee() == personalEntity.getPersonalId())
@@ -55,8 +65,8 @@ public class MergeServiceImp implements MergeService {
                     .orElse(null);
 
             if (matchingEmployeeEntity != null && matchingEmployeeEntity.getIdEmployee() == personalEntity.getPersonalId()) {
-                mergePerson = mergePersonBuilder(matchingEmployeeEntity, personalEntity);
-                returnValue.add(mergePerson);
+                mergePersonDTO = mergePersonBuilder(matchingEmployeeEntity, personalEntity);
+                returnValue.add(mergePersonDTO);
             }
         }
 
@@ -64,17 +74,17 @@ public class MergeServiceImp implements MergeService {
     }
 
     @Override
-    //Because the mothod contain 2 transactional, we need to specify the transactionManager
-    public boolean updateEmployeePersonal(MergePerson mergePerson, int id) {
+    //Because the method contain 2 transactional, we need to specify the transactionManager
+    public boolean updateEmployeePersonal(MergePersonDTO mergePersonDTO, int id) {
         EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
         PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
 
-        BeanUtils.copyProperties(mergePerson, personalEntity);
+        BeanUtils.copyProperties(mergePersonDTO, personalEntity);
 
         personalEntity.setPersonalId(id);
 
-        employeeEntity.setFirstName(mergePerson.getCurrentFirstName());
-        employeeEntity.setLastName(mergePerson.getCurrentLastName());
+        employeeEntity.setFirstName(mergePersonDTO.getCurrentFirstName());
+        employeeEntity.setLastName(mergePersonDTO.getCurrentLastName());
 
         try {
             humanResourceService.updatePersonal(personalEntity);
@@ -102,7 +112,7 @@ public class MergeServiceImp implements MergeService {
     }
 
     @Override
-    public MergePerson getMergePersonById(int id) {
+    public MergePersonDTO getMergePersonById(int id) {
         EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
         PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
 
@@ -130,8 +140,45 @@ public class MergeServiceImp implements MergeService {
         }
     }
 
-    public MergePerson mergePersonBuilder(EmployeeEntity employeeEntity, PersonalEntity personalEntity){
-        return MergePerson.builder().personalId(personalEntity.getPersonalId())
+
+    @Override
+    public String updateEmploymentDetails(int id, UpdateEmploymentDetails updateEmploymentDetails) {
+        PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
+        if (personalEntity == null) {
+            return "Cannot find PersonalEntity with id: " + id;
+        }
+
+        List<EmploymentEntity> employmentEntityList = personalEntity.getEmploymentEntityList();
+        if (employmentEntityList != null) {
+            EmploymentEntity existingEmploymentEntity = humanResourceService.findByEmploymentId(updateEmploymentDetails.getEmploymentId());
+            if (existingEmploymentEntity != null) {
+                BeanUtils.copyProperties(updateEmploymentDetails, existingEmploymentEntity);
+
+                // Update JobHistoryEntity
+                JobHistoryEntity jobHistoryEntity = humanResourceService.findByJobHistoryId(updateEmploymentDetails.getJobHistoryId());
+                if (jobHistoryEntity != null) {
+                    BeanUtils.copyProperties(updateEmploymentDetails, jobHistoryEntity);
+                    jobHistoryEntity.setEmployment(existingEmploymentEntity);
+                    humanResourceService.updateJobHistory(jobHistoryEntity);
+                }
+
+                // Update EmploymentWorkingTimeEntity
+                EmploymentWorkingTimeEntity employmentWorkingTimeEntity = humanResourceService.findByEmploymentWorkingTimeId(updateEmploymentDetails.getEmploymentWorkingTimeId());
+                if (employmentWorkingTimeEntity != null) {
+                    BeanUtils.copyProperties(updateEmploymentDetails, employmentWorkingTimeEntity);
+                    employmentWorkingTimeEntity.setEmployment(existingEmploymentEntity);
+                    humanResourceService.updateEmploymentWorkingTime(employmentWorkingTimeEntity);
+                }
+                return "Update Successfully";
+            }
+            else return "Cannot find EmploymentEntity with id: " + updateEmploymentDetails.getEmploymentId();
+        }
+        return "No employment details found";
+    }
+
+
+    public MergePersonDTO mergePersonBuilder(EmployeeEntity employeeEntity, PersonalEntity personalEntity){
+        return MergePersonDTO.builder().personalId(personalEntity.getPersonalId())
                 .currentFirstName(personalEntity.getCurrentFirstName())
                 .currentMiddleName(personalEntity.getCurrentMiddleName())
                 .currentLastName(personalEntity.getCurrentLastName())

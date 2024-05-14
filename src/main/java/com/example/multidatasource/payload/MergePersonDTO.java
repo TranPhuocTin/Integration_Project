@@ -1,17 +1,20 @@
-package com.example.multidatasource.model.request;
+package com.example.multidatasource.payload;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.example.multidatasource.entity.mysql.PayRateEntity;
+//import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
+import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
+import com.example.multidatasource.entity.sqlsever.EmploymentEntity;
+import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UpdatePersonalDTO {
+@Builder
+public class MergePersonDTO {
     private int personalId;
     private String currentFirstName;
     private String currentLastName;
@@ -30,4 +33,12 @@ public class UpdatePersonalDTO {
     private String currentMaritalStatus;
     private String ethnicity;
     private Short shareholderStatus;
+    private int employeeNumber;
+    private String payRate;
+    private Integer vacationDays;
+    private Double paidToDate;
+    private Double paidLastYear;
+    private BenefitPlanEntity benefitPlan;
+    private PayRateEntity payRates;
+    private List<EmploymentEntity> employmentEntityList;
 }

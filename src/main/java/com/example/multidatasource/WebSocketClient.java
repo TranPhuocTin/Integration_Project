@@ -1,6 +1,6 @@
 package com.example.multidatasource;
 
-import com.example.multidatasource.entity.merge.MergePerson;
+import com.example.multidatasource.payload.MergePersonDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -30,7 +30,7 @@ public class WebSocketClient {
         session.subscribe("/topic/merge", new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return new ParameterizedTypeReference<List<MergePerson>>() {}.getType();
+                return new ParameterizedTypeReference<List<MergePersonDTO>>() {}.getType();
             }
 
             @Override
@@ -38,12 +38,12 @@ public class WebSocketClient {
                 try {
                     ObjectMapper mapper = new ObjectMapper();
                     List<LinkedHashMap<String, Object>> dataList = (List<LinkedHashMap<String, Object>>) payload;
-                    List<MergePerson> mergePersonList = new ArrayList<>();
+                    List<MergePersonDTO> mergePersonDTOList = new ArrayList<>();
                     for (LinkedHashMap<String, Object> data : dataList) {
-                        MergePerson mergePerson = mapper.convertValue(data, MergePerson.class);
-                        mergePersonList.add(mergePerson);
+                        MergePersonDTO mergePersonDTO = mapper.convertValue(data, MergePersonDTO.class);
+                        mergePersonDTOList.add(mergePersonDTO);
                     }
-                    mergePersonList.forEach(mergePerson -> System.out.println("Received message: " + mergePerson));
+                    mergePersonDTOList.forEach(mergePersonDTO -> System.out.println("Received message: " + mergePersonDTO));
                 } catch (Exception e) {
                     System.out.println("Error handling message: " + e.getMessage());
                 }

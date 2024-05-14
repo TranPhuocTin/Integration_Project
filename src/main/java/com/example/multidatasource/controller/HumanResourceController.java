@@ -47,7 +47,7 @@ public class HumanResourceController {
 
     @GetMapping("/get-all-job-histories")
     public ResponseEntity<List<JobHistoryEntity>> getAllJobHistories(){
-        return ResponseEntity.ok(humanresourceService.getAllJobHistories());
+        return ResponseEntity.ok(humanresourceService.getAllJobHistories());    
     }
 
     @GetMapping("/get-all-employment-working-time")

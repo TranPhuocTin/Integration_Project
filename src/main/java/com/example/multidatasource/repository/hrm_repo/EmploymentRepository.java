@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface EmploymentRepository extends JpaRepository<EmploymentEntity, Integer> {
+    EmploymentEntity findByEmploymentId(int id);
 }

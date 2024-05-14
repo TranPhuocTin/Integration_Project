@@ -13,4 +13,7 @@ public interface JobHistoryRepository extends JpaRepository<JobHistoryEntity, In
 
     List<JobHistoryEntity> findByEmployment_Personal(int personalId);
     List<JobHistoryEntity> findAllBy();
+
+    JobHistoryEntity findByJobHistoryId(Long id);
+    JobHistoryEntity findByEmployment(EmploymentEntity employment);
 }
