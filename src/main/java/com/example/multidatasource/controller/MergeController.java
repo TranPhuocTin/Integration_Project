@@ -1,13 +1,6 @@
 package com.example.multidatasource.controller;
-
-import com.example.multidatasource.entity.mysql.EmployeeEntity;
-import com.example.multidatasource.entity.mysql.PayRateEntity;
-import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
-import com.example.multidatasource.entity.sqlsever.EmploymentEntity;
-import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
-import com.example.multidatasource.entity.sqlsever.JobHistoryEntity;
 import com.example.multidatasource.payload.UpdateBenefitAndPayRateDTO;
-import com.example.multidatasource.payload.UpdateEmploymentDetails;
+import com.example.multidatasource.payload.UpdateEmploymentDetailsDTO;
 import com.example.multidatasource.payload.UpdatePersonalDTO;
 import com.example.multidatasource.payload.MergePersonDTO;
 import com.example.multidatasource.service.MergeService;
@@ -23,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/merge")
+@CrossOrigin(origins = "http://localhost:5000")
 @EnableWebSocket
 public class MergeController {
     private final MergeService mergeService;
@@ -65,14 +59,7 @@ public class MergeController {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         else{
-            BenefitPlanEntity benefitPlanUpdate = new BenefitPlanEntity();
-            PayRateEntity payRateEntityUpdate = new PayRateEntity();
-
-            BeanUtils.copyProperties(updateBenefitAndPayrateDTO, benefitPlanUpdate);
-            BeanUtils.copyProperties(updateBenefitAndPayrateDTO, payRateEntityUpdate);
-
-
-            boolean result = mergeService.updateBenefitPlanPayrate(id ,benefitPlanUpdate, payRateEntityUpdate, updateBenefitAndPayrateDTO.getPaidToDate(), updateBenefitAndPayrateDTO.getPaidLastYear());
+            boolean result = mergeService.updateBenefitPlanPayrate(id ,updateBenefitAndPayrateDTO);
 
             if(result){
                 sendSocketMessage();
@@ -90,12 +77,12 @@ public class MergeController {
     }
 
     @PutMapping("/update-employment-details/{id}")
-    public ResponseEntity<?> updateEmploymentDetails(@RequestBody UpdateEmploymentDetails updateEmploymentDetails, @PathVariable int id){
-        if(updateEmploymentDetails == null){
+    public ResponseEntity<?> updateEmploymentDetails(@RequestBody UpdateEmploymentDetailsDTO updateEmploymentDetailsDTO, @PathVariable int id){
+        if(updateEmploymentDetailsDTO == null){
             return ResponseEntity.badRequest().body("Invalid request");
         }
         else{
-            String result = mergeService.updateEmploymentDetails(id, updateEmploymentDetails);
+            String result = mergeService.updateEmploymentDetails(id, updateEmploymentDetailsDTO);
             if(result.equals("Update Successfully")){
                 sendSocketMessage();
                 return ResponseEntity.ok(result);

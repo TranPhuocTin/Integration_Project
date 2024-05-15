@@ -1,4 +1,4 @@
-package com.example.multidatasource.config;
+package com.example.multidatasource.configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ import java.util.Properties;
         transactionManagerRef = "mysqlTransactionManager",
         basePackages = {"com.example.multidatasource.repository.pr_repo"}
 )
-public class MySQLDatabaseConfiguration {
+public class MySQLDatabaseConfig {
 
     @Bean(name = "mysqlDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.mysql")

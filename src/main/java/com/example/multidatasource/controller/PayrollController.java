@@ -1,10 +1,7 @@
 package com.example.multidatasource.controller;
 
-//import com.example.multidatasource.entity.merge.EmployeePersonalDTO;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.service.PayrollService;
-//import com.example.multidatasource.service.MergeEmployeePersonalService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

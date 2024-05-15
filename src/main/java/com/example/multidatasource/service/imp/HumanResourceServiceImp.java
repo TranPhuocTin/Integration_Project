@@ -2,10 +2,7 @@ package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.sqlsever.*;
-import com.example.multidatasource.repository.hrm_repo.EmploymentRepository;
-import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
-import com.example.multidatasource.repository.hrm_repo.JobHistoryRepository;
-import com.example.multidatasource.repository.hrm_repo.PersonalRepository;
+import com.example.multidatasource.repository.hrm_repo.*;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
 import com.example.multidatasource.service.HumanResourceService;
 
@@ -70,6 +67,7 @@ public class HumanResourceServiceImp implements HumanResourceService {
     public boolean updateBenefitPlanByPersonalId(int personalId, BenefitPlanEntity benefitPlan) {
         PersonalEntity personal = personalRepo.findByPersonalId(personalId);
         if(personal != null){
+//            benefitPlanRepo.save(benefitPlan);
             personal.setBenefitPlan(benefitPlan);
             personalRepo.save(personal);
             return true;

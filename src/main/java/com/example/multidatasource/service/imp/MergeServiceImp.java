@@ -4,7 +4,8 @@ import com.example.multidatasource.entity.sqlsever.*;
 import com.example.multidatasource.payload.MergePersonDTO;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.mysql.PayRateEntity;
-import com.example.multidatasource.payload.UpdateEmploymentDetails;
+import com.example.multidatasource.payload.UpdateBenefitAndPayRateDTO;
+import com.example.multidatasource.payload.UpdateEmploymentDetailsDTO;
 import com.example.multidatasource.repository.hrm_repo.EmploymentRepository;
 import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
 import com.example.multidatasource.repository.hrm_repo.JobHistoryRepository;
@@ -22,9 +23,6 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MergeServiceImp implements MergeService {
@@ -82,7 +80,6 @@ public class MergeServiceImp implements MergeService {
         BeanUtils.copyProperties(mergePersonDTO, personalEntity);
 
         personalEntity.setPersonalId(id);
-
         employeeEntity.setFirstName(mergePersonDTO.getCurrentFirstName());
         employeeEntity.setLastName(mergePersonDTO.getCurrentLastName());
 
@@ -124,16 +121,22 @@ public class MergeServiceImp implements MergeService {
     }
 
     @Override
-    public boolean updateBenefitPlanPayrate(int id, BenefitPlanEntity benefitPlan, PayRateEntity payRate, double paidToDate, double paidLastYear) {
+    public boolean updateBenefitPlanPayrate(int id, UpdateBenefitAndPayRateDTO updateBenefitAndPayrateDTO) {
         EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
 
-        employeeEntity.setPaidToDate(paidToDate);
-        employeeEntity.setPaidLastYear(paidLastYear);
+        BenefitPlanEntity benefitPlanUpdate = new BenefitPlanEntity();
+        PayRateEntity payRateEntityUpdate = new PayRateEntity();
+
+        BeanUtils.copyProperties(updateBenefitAndPayrateDTO, benefitPlanUpdate);
+        BeanUtils.copyProperties(updateBenefitAndPayrateDTO, payRateEntityUpdate);
+
+        employeeEntity.setPaidToDate(updateBenefitAndPayrateDTO.getPaidToDate());
+        employeeEntity.setPaidLastYear(updateBenefitAndPayrateDTO.getPaidLastYear());
 
         try {
-            humanResourceService.updateBenefitPlanByPersonalId(id, benefitPlan);
+            humanResourceService.updateBenefitPlanByPersonalId(id,benefitPlanUpdate);
             payrollService.updateEmployee(employeeEntity);
-            payrollService.updatePayrateByEmployeeId(id, payRate);
+            payrollService.updatePayrateByEmployeeId(id,payRateEntityUpdate);
             return true;
         } catch (Exception e) {
             return false;
@@ -142,7 +145,7 @@ public class MergeServiceImp implements MergeService {
 
 
     @Override
-    public String updateEmploymentDetails(int id, UpdateEmploymentDetails updateEmploymentDetails) {
+    public String updateEmploymentDetails(int id, UpdateEmploymentDetailsDTO updateEmploymentDetailsDTO) {
         PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
         if (personalEntity == null) {
             return "Cannot find PersonalEntity with id: " + id;
@@ -150,28 +153,28 @@ public class MergeServiceImp implements MergeService {
 
         List<EmploymentEntity> employmentEntityList = personalEntity.getEmploymentEntityList();
         if (employmentEntityList != null) {
-            EmploymentEntity existingEmploymentEntity = humanResourceService.findByEmploymentId(updateEmploymentDetails.getEmploymentId());
+            EmploymentEntity existingEmploymentEntity = humanResourceService.findByEmploymentId(updateEmploymentDetailsDTO.getEmploymentId());
             if (existingEmploymentEntity != null) {
-                BeanUtils.copyProperties(updateEmploymentDetails, existingEmploymentEntity);
+                BeanUtils.copyProperties(updateEmploymentDetailsDTO, existingEmploymentEntity);
 
                 // Update JobHistoryEntity
-                JobHistoryEntity jobHistoryEntity = humanResourceService.findByJobHistoryId(updateEmploymentDetails.getJobHistoryId());
+                JobHistoryEntity jobHistoryEntity = humanResourceService.findByJobHistoryId(updateEmploymentDetailsDTO.getJobHistoryId());
                 if (jobHistoryEntity != null) {
-                    BeanUtils.copyProperties(updateEmploymentDetails, jobHistoryEntity);
+                    BeanUtils.copyProperties(updateEmploymentDetailsDTO, jobHistoryEntity);
                     jobHistoryEntity.setEmployment(existingEmploymentEntity);
                     humanResourceService.updateJobHistory(jobHistoryEntity);
                 }
 
                 // Update EmploymentWorkingTimeEntity
-                EmploymentWorkingTimeEntity employmentWorkingTimeEntity = humanResourceService.findByEmploymentWorkingTimeId(updateEmploymentDetails.getEmploymentWorkingTimeId());
+                EmploymentWorkingTimeEntity employmentWorkingTimeEntity = humanResourceService.findByEmploymentWorkingTimeId(updateEmploymentDetailsDTO.getEmploymentWorkingTimeId());
                 if (employmentWorkingTimeEntity != null) {
-                    BeanUtils.copyProperties(updateEmploymentDetails, employmentWorkingTimeEntity);
+                    BeanUtils.copyProperties(updateEmploymentDetailsDTO, employmentWorkingTimeEntity);
                     employmentWorkingTimeEntity.setEmployment(existingEmploymentEntity);
                     humanResourceService.updateEmploymentWorkingTime(employmentWorkingTimeEntity);
                 }
                 return "Update Successfully";
             }
-            else return "Cannot find EmploymentEntity with id: " + updateEmploymentDetails.getEmploymentId();
+            else return "Cannot find EmploymentEntity with id: " + updateEmploymentDetailsDTO.getEmploymentId();
         }
         return "No employment details found";
     }

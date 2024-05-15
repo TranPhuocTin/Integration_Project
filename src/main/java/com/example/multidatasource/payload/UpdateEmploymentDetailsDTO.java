@@ -1,7 +1,5 @@
 package com.example.multidatasource.payload;
 
-import com.example.multidatasource.entity.sqlsever.EmploymentEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UpdateEmploymentDetails {
+public class UpdateEmploymentDetailsDTO {
     //Id
     private int employmentId;
     private Long jobHistoryId;

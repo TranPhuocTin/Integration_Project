@@ -17,8 +17,6 @@ public class UpdatePersonalDTO {
     private String currentLastName;
     private String currentMiddleName;
     private Date birthDate;
-    private String socialSecurityNumber;
-    private String driversLicense;
     private String currentAddress1;
     private String currentAddress2;
     private String currentCity;

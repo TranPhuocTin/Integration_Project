@@ -15,9 +15,8 @@ import java.util.List;
 @Service
 public class PayrollServiceImp implements PayrollService {
     private final EmployeeRepository employeeRepository;
-
     @Autowired
-    public PayrollServiceImp(EmployeeRepository employeeRepository, EmploymentWorkingTimeRepository employmentWorkingTimeRepository) {
+    public PayrollServiceImp(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
@@ -56,6 +55,7 @@ public class PayrollServiceImp implements PayrollService {
         if(employee == null){
             return false;
         }
+//        payRateRepository.save(payRate);
         employee.setPayRates(payRate);
         employeeRepository.save(employee);
         return true;

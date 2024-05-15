@@ -1,4 +1,4 @@
-package com.example.multidatasource.config;
+package com.example.multidatasource.configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ import java.util.Properties;
         transactionManagerRef = "sqlServerTransactionManager",
         basePackages = {"com.example.multidatasource.repository.hrm_repo"}
 )
-public class SQLServerDatabaseConfiguration {
+public class SQLServerDatabaseConfig {
 
     @Bean(name = "sqlServerDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.sqlserver")
