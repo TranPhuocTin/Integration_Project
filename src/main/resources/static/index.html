@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <script>
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/updates', function (messageOutput) {
+                    showMessage(messageOutput.body);
+                });
+            });
+        }
+
+        function showMessage(message) {
+            const response = document.getElementById('response');
+            const p = document.createElement('p');
+            p.appendChild(document.createTextNode(message));
+            response.appendChild(p);
+        }
+
+        function sendUpdate() {
+            fetch('/test/update/1', {method: 'POST'})
+                .then(response => response.text())
+                .then(message => console.log(message));
+        }
+
+        window.onload = function() {
+            connect();
+        }
+    </script>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<button onclick="sendUpdate()">Send Update</button>
+<div id="response"></div>
+</body>
+</html>
