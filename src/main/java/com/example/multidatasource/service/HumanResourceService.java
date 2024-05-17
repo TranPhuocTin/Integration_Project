@@ -1,5 +1,6 @@
 package com.example.multidatasource.service;
 
+import com.example.multidatasource.entity.mysql.PayRateEntity;
 import com.example.multidatasource.entity.sqlsever.*;
 
 import java.util.List;
@@ -13,8 +14,6 @@ public interface HumanResourceService {
 
     void updatePersonal(PersonalEntity personal);
 
-    boolean updateBenefitPlanByPersonalId(int personalId, BenefitPlanEntity benefitPlan);
-
     List<JobHistoryEntity> findJobHistoryByPersonalId(int id);
 
     List<EmploymentWorkingTimeEntity> findEmploymentWorkingTimeByPersonalId(int id);
@@ -22,8 +21,6 @@ public interface HumanResourceService {
     List<JobHistoryEntity> getAllJobHistories();
 
     List<EmploymentWorkingTimeEntity> getAllEmploymentWorkingTime();
-
-    boolean updateEmployment(EmploymentEntity employment);
 
     EmploymentEntity findByEmploymentId(int id);
 
@@ -35,6 +32,5 @@ public interface HumanResourceService {
 
     EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id);
 
-    EmploymentWorkingTimeEntity findEmploymentWorkingTimeByEmployment(EmploymentEntity employment);
-    JobHistoryEntity findJobHistoryByEmployment(EmploymentEntity employment);
+    BenefitPlanEntity findByBenefitPlansId(int id);
 }

@@ -14,6 +14,8 @@ public interface PayrollService {
 
     void updateEmployee(EmployeeEntity employee);
 
-    boolean updatePayrateByEmployeeId(int employeeId, PayRateEntity payrate);
+    PayRateEntity findByIdPayRates(int id);
+
+    EmployeeEntity updaEmployeeEntity (EmployeeEntity employeeEntity);
 }
 

@@ -6,15 +6,11 @@ import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.mysql.PayRateEntity;
 import com.example.multidatasource.payload.UpdateBenefitAndPayRateDTO;
 import com.example.multidatasource.payload.UpdateEmploymentDetailsDTO;
-import com.example.multidatasource.repository.hrm_repo.EmploymentRepository;
-import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
-import com.example.multidatasource.repository.hrm_repo.JobHistoryRepository;
-import com.example.multidatasource.repository.hrm_repo.PersonalRepository;
+import com.example.multidatasource.repository.hrm_repo.*;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
 import com.example.multidatasource.service.PayrollService;
 import com.example.multidatasource.service.MergeService;
 import com.example.multidatasource.service.HumanResourceService;
-//import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +27,14 @@ public class MergeServiceImp implements MergeService {
     private final HumanResourceService humanResourceService;
     private final PersonalRepository personalRepository;
     private final EmployeeRepository employeeRepository;
-    private final EmploymentWorkingTimeRepository employmentWorkingTimeRepository;
-    private final JobHistoryRepository jobHistoryRepository;
-    private final EmploymentRepository employmentRepository;
+
 
     @Autowired
-    public MergeServiceImp(PayrollService payrollService, HumanResourceService humanResourceService, PersonalRepository personalRepository, EmployeeRepository employeeRepository, EmploymentWorkingTimeRepository employmentWorkingTimeRepository, JobHistoryRepository jobHistoryRepository, EmploymentRepository employmentRepository) {
+    public MergeServiceImp(PayrollService payrollService, HumanResourceService humanResourceService, PersonalRepository personalRepository, EmployeeRepository employeeRepository) {
         this.payrollService = payrollService;
         this.humanResourceService = humanResourceService;
         this.personalRepository = personalRepository;
         this.employeeRepository = employeeRepository;
-        this.employmentWorkingTimeRepository = employmentWorkingTimeRepository;
-        this.jobHistoryRepository = jobHistoryRepository;
-        this.employmentRepository = employmentRepository;
     }
 
 
@@ -123,20 +114,21 @@ public class MergeServiceImp implements MergeService {
     @Override
     public boolean updateBenefitPlanPayrate(int id, UpdateBenefitAndPayRateDTO updateBenefitAndPayrateDTO) {
         EmployeeEntity employeeEntity = payrollService.getEmployeeById(id);
+        PersonalEntity personalEntity = humanResourceService.getPersonalById(id);
 
-        BenefitPlanEntity benefitPlanUpdate = new BenefitPlanEntity();
-        PayRateEntity payRateEntityUpdate = new PayRateEntity();
+        BenefitPlanEntity benefitPlanUpdate = humanResourceService.findByBenefitPlansId(updateBenefitAndPayrateDTO.getBenefitPlansId());
+        PayRateEntity payRateEntityUpdate = payrollService.findByIdPayRates(updateBenefitAndPayrateDTO.getIdPayRates());
 
-        BeanUtils.copyProperties(updateBenefitAndPayrateDTO, benefitPlanUpdate);
-        BeanUtils.copyProperties(updateBenefitAndPayrateDTO, payRateEntityUpdate);
 
         employeeEntity.setPaidToDate(updateBenefitAndPayrateDTO.getPaidToDate());
         employeeEntity.setPaidLastYear(updateBenefitAndPayrateDTO.getPaidLastYear());
+        employeeEntity.setPayRates(payRateEntityUpdate);
+
+        personalEntity.setBenefitPlan(benefitPlanUpdate);
 
         try {
-            humanResourceService.updateBenefitPlanByPersonalId(id,benefitPlanUpdate);
+            humanResourceService.updatePersonal(personalEntity);
             payrollService.updateEmployee(employeeEntity);
-            payrollService.updatePayrateByEmployeeId(id,payRateEntityUpdate);
             return true;
         } catch (Exception e) {
             return false;

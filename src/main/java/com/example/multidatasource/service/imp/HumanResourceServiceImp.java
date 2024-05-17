@@ -1,9 +1,7 @@
 package com.example.multidatasource.service.imp;
 
-import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.sqlsever.*;
 import com.example.multidatasource.repository.hrm_repo.*;
-import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
 import com.example.multidatasource.service.HumanResourceService;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -18,22 +16,15 @@ public class HumanResourceServiceImp implements HumanResourceService {
     private final EmploymentRepository employmentRepo;
     private final PersonalRepository personalRepo;
 
+    private final BenefitPlanRepository benefitPlanRepo;
+
     @Autowired
-    public HumanResourceServiceImp(EmploymentWorkingTimeRepository employmentWorkingTimeRepo, JobHistoryRepository jobHistoryRepo, EmploymentRepository employmentRepo, PersonalRepository personalRepo) {
+    public HumanResourceServiceImp(EmploymentWorkingTimeRepository employmentWorkingTimeRepo, JobHistoryRepository jobHistoryRepo, EmploymentRepository employmentRepo, PersonalRepository personalRepo, BenefitPlanRepository benefitPlanRepo) {
         this.employmentWorkingTimeRepo = employmentWorkingTimeRepo;
         this.jobHistoryRepo = jobHistoryRepo;
         this.employmentRepo = employmentRepo;
         this.personalRepo = personalRepo;
-    }
-
-    @Override
-    public List<PersonalEntity> getAllPersonals(){
-        return personalRepo.findAll();
-    }
-
-    @Override
-    public PersonalEntity getPersonalById(int id) {
-        return personalRepo.findById(id).orElse(null);
+        this.benefitPlanRepo = benefitPlanRepo;
     }
 
     @Override
@@ -64,15 +55,27 @@ public class HumanResourceServiceImp implements HumanResourceService {
 
     @Override
     @Transactional(value = "sqlServerTransactionManager", rollbackFor = Exception.class)
-    public boolean updateBenefitPlanByPersonalId(int personalId, BenefitPlanEntity benefitPlan) {
-        PersonalEntity personal = personalRepo.findByPersonalId(personalId);
-        if(personal != null){
-//            benefitPlanRepo.save(benefitPlan);
-            personal.setBenefitPlan(benefitPlan);
-            personalRepo.save(personal);
-            return true;
-        }
-        return false;
+    public boolean updateJobHistory(JobHistoryEntity jobHistory) {
+        jobHistoryRepo.save(jobHistory);
+        return true;
+    }
+
+    @Override
+    @Transactional(value = "sqlServerTransactionManager", rollbackFor = Exception.class)
+    public boolean updateEmploymentWorkingTime(EmploymentWorkingTimeEntity employmentWorkingTime) {
+        employmentWorkingTimeRepo.save(employmentWorkingTime);
+        return true;
+    }
+
+
+    @Override
+    public List<PersonalEntity> getAllPersonals(){
+        return personalRepo.findAll();
+    }
+
+    @Override
+    public PersonalEntity getPersonalById(int id) {
+        return personalRepo.findById(id).orElse(null);
     }
 
     @Override
@@ -96,26 +99,8 @@ public class HumanResourceServiceImp implements HumanResourceService {
     }
 
     @Override
-    public boolean updateEmployment(EmploymentEntity employment) {
-        employmentRepo.save(employment);
-        return true;
-    }
-
-    @Override
     public EmploymentEntity findByEmploymentId(int id) {
         return employmentRepo.findByEmploymentId(id);
-    }
-
-    @Override
-    public boolean updateJobHistory(JobHistoryEntity jobHistory) {
-        jobHistoryRepo.save(jobHistory);
-        return true;
-    }
-
-    @Override
-    public boolean updateEmploymentWorkingTime(EmploymentWorkingTimeEntity employmentWorkingTime) {
-        employmentWorkingTimeRepo.save(employmentWorkingTime);
-        return true;
     }
 
     @Override
@@ -127,15 +112,9 @@ public class HumanResourceServiceImp implements HumanResourceService {
     public EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id) {
         return employmentWorkingTimeRepo.findByEmploymentWorkingTimeId(id);
     }
-
     @Override
-    public EmploymentWorkingTimeEntity findEmploymentWorkingTimeByEmployment(EmploymentEntity employment) {
-        return employmentWorkingTimeRepo.findByEmployment(employment);
-    }
-
-    @Override
-    public JobHistoryEntity findJobHistoryByEmployment(EmploymentEntity employment) {
-        return jobHistoryRepo.findByEmployment(employment);
+    public BenefitPlanEntity findByBenefitPlansId(int id) {
+        return benefitPlanRepo.findByBenefitPlansId(id);
     }
 
 

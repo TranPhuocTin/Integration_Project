@@ -2,9 +2,8 @@ package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.mysql.PayRateEntity;
-import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
-import com.example.multidatasource.repository.hrm_repo.EmploymentWorkingTimeRepository;
 import com.example.multidatasource.repository.pr_repo.EmployeeRepository;
+import com.example.multidatasource.repository.pr_repo.PayRateRepository;
 import com.example.multidatasource.service.PayrollService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,11 @@ import java.util.List;
 @Service
 public class PayrollServiceImp implements PayrollService {
     private final EmployeeRepository employeeRepository;
+    private final PayRateRepository payRateRepository;
     @Autowired
-    public PayrollServiceImp(EmployeeRepository employeeRepository) {
+    public PayrollServiceImp(EmployeeRepository employeeRepository, PayRateRepository payRateRepository) {
         this.employeeRepository = employeeRepository;
+        this.payRateRepository = payRateRepository;
     }
 
     @Override
@@ -49,16 +50,14 @@ public class PayrollServiceImp implements PayrollService {
     }
 
     @Override
+    public PayRateEntity findByIdPayRates(int id) {
+        return payRateRepository.findByIdPayRates(id);
+    }
+
+    @Override
     @Transactional(transactionManager="mysqlTransactionManager", rollbackFor = Exception.class)
-    public boolean updatePayrateByEmployeeId(int employeeId, PayRateEntity payRate) {
-        EmployeeEntity employee = employeeRepository.findByIdEmployee(employeeId);
-        if(employee == null){
-            return false;
-        }
-//        payRateRepository.save(payRate);
-        employee.setPayRates(payRate);
-        employeeRepository.save(employee);
-        return true;
+    public EmployeeEntity updaEmployeeEntity(EmployeeEntity employeeEntity) {
+        return employeeRepository.save(employeeEntity);
     }
 
 
