@@ -40,5 +40,5 @@ public class MergePersonDTO {
     private Double paidLastYear;
     private BenefitPlanEntity benefitPlan;
     private PayRateEntity payRates;
-    private List<EmploymentEntity> employment;
+    private List<EmploymentEntity> employmentEntityList;
 }

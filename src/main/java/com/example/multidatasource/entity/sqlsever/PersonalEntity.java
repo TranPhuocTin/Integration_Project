@@ -75,7 +75,7 @@ public class PersonalEntity {
     private BenefitPlanEntity benefitPlan;
 
     @OneToMany(mappedBy = "personal", cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    private List<EmploymentEntity> employment;
+    private List<EmploymentEntity> employmentEntityList;
 
     public String getEthnicity() {
         return ethnicity != null ? ethnicity.trim() : null;
