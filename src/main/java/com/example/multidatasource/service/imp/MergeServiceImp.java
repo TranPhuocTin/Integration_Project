@@ -119,9 +119,6 @@ public class MergeServiceImp implements MergeService {
         BenefitPlanEntity benefitPlanUpdate = humanResourceService.findByBenefitPlansId(updateBenefitAndPayrateDTO.getBenefitPlansId());
         PayRateEntity payRateEntityUpdate = payrollService.findByIdPayRates(updateBenefitAndPayrateDTO.getIdPayRates());
 
-
-        employeeEntity.setPaidToDate(updateBenefitAndPayrateDTO.getPaidToDate());
-        employeeEntity.setPaidLastYear(updateBenefitAndPayrateDTO.getPaidLastYear());
         employeeEntity.setPayRates(payRateEntityUpdate);
 
         personalEntity.setBenefitPlan(benefitPlanUpdate);

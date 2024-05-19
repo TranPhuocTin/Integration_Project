@@ -12,6 +12,4 @@ import lombok.ToString;
 public class UpdateBenefitAndPayRateDTO {
     private int benefitPlansId;
     private int idPayRates;
-    private double paidToDate;
-    private double paidLastYear;
 }
