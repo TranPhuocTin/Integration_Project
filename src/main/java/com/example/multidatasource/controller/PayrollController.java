@@ -1,6 +1,7 @@
 package com.example.multidatasource.controller;
 
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
+import com.example.multidatasource.entity.mysql.PayRateEntity;
 import com.example.multidatasource.service.PayrollService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +24,10 @@ public class PayrollController {
     @GetMapping("/get-all-employees")
     public ResponseEntity<List<EmployeeEntity>> getAllEmployees(){
         return ResponseEntity.ok(employeeService.getAllEmployees());
+    }
+
+    @GetMapping("/get-all-payrates")
+    public ResponseEntity<List<PayRateEntity>> getAllPayRates(){
+        return ResponseEntity.ok(employeeService.getAllPayRates());
     }
 }

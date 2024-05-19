@@ -13,26 +13,78 @@
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/updates', function (messageOutput) {
-                    showMessage(messageOutput.body);
+                stompClient.subscribe('/topic/merge', function (messageOutput) {
+                    showMessage(JSON.parse(messageOutput.body));
                 });
             });
         }
 
+        function fetchInitialData() {
+            fetch('/merge/get-merge-person')
+                .then(response => response.json())
+                .then(data => showMessage(data))
+                .catch(error => console.error('Lỗi khi lấy dữ liệu ban đầu:', error));
+        }
+
         function showMessage(message) {
             const response = document.getElementById('response');
-            const p = document.createElement('p');
-            p.appendChild(document.createTextNode(message));
-            response.appendChild(p);
+            response.innerHTML = '';
+
+            message.forEach(person => {
+                const p = document.createElement('p');
+                p.innerHTML = `
+                    <strong>ID:</strong> ${person.personalId}<br>
+                    <strong>First Name:</strong> ${person.currentFirstName}<br>
+                    <strong>Last Name:</strong> ${person.currentLastName}<br>
+                    <strong>Middle Name:</strong> ${person.currentMiddleName}<br>
+                    <strong>Birth Date:</strong> ${new Date(person.birthDate).toLocaleDateString()}<br>
+                    <strong>Address 1:</strong> ${person.currentAddress1}<br>
+                    <strong>Address 2:</strong> ${person.currentAddress2}<br>
+                    <strong>City:</strong> ${person.currentCity}<br>
+                    <strong>Country:</strong> ${person.currentCountry}<br>
+                    <strong>Zip:</strong> ${person.currentZip}<br>
+                    <strong>Gender:</strong> ${person.currentGender}<br>
+                    <strong>Phone Number:</strong> ${person.currentPhoneNumber}<br>
+                    <strong>Email:</strong> ${person.currentPersonalEmail}<br>
+                    <strong>Marital Status:</strong> ${person.currentMaritalStatus}<br>
+                    <strong>Ethnicity:</strong> ${person.ethnicity}<br>
+                    <strong>Shareholder Status:</strong> ${person.shareholderStatus}
+                `;
+                response.appendChild(p);
+            });
         }
 
         function sendUpdate() {
-            fetch('/test/update/1', {method: 'POST'})
+            fetch('/merge/update-profile/1', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    personalId: 1,
+                    currentFirstName: "John",
+                    currentLastName: "Doe",
+                    currentMiddleName: "A.",
+                    birthDate: "1990-01-01",
+                    currentAddress1: "123 Main St",
+                    currentAddress2: "Apt 4",
+                    currentCity: "Anytown",
+                    currentCountry: "USA",
+                    currentZip: 12345,
+                    currentGender: "Male",
+                    currentPhoneNumber: "555-555-5555",
+                    currentPersonalEmail: "john.doe@example.com",
+                    currentMaritalStatus: "Single",
+                    ethnicity: "Caucasian",
+                    shareholderStatus: 0
+                })
+            })
                 .then(response => response.text())
                 .then(message => console.log(message));
         }
 
         window.onload = function() {
+            fetchInitialData();
             connect();
         }
     </script>

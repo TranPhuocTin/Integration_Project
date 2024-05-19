@@ -143,7 +143,7 @@ public class MergeServiceImp implements MergeService {
             return "Cannot find PersonalEntity with id: " + id;
         }
 
-        List<EmploymentEntity> employmentEntityList = personalEntity.getEmploymentEntityList();
+        List<EmploymentEntity> employmentEntityList = personalEntity.getEmployment();
         if (employmentEntityList != null) {
             EmploymentEntity existingEmploymentEntity = humanResourceService.findByEmploymentId(updateEmploymentDetailsDTO.getEmploymentId());
             if (existingEmploymentEntity != null) {
@@ -198,7 +198,7 @@ public class MergeServiceImp implements MergeService {
                 .paidToDate(employeeEntity.getPaidToDate())
                 .paidLastYear(employeeEntity.getPaidLastYear())
                 .payRates(employeeEntity.getPayRates())
-                .employmentEntityList(personalEntity.getEmploymentEntityList()).
+                .employment(personalEntity.getEmployment()).
                 build();
     }
 }

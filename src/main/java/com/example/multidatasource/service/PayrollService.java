@@ -17,5 +17,7 @@ public interface PayrollService {
     PayRateEntity findByIdPayRates(int id);
 
     EmployeeEntity updaEmployeeEntity (EmployeeEntity employeeEntity);
+
+    List<PayRateEntity> getAllPayRates();
 }
 

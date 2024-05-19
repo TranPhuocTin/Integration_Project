@@ -33,4 +33,6 @@ public interface HumanResourceService {
     EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id);
 
     BenefitPlanEntity findByBenefitPlansId(int id);
+
+    List<BenefitPlanEntity> findAllBenefitPlans();
 }

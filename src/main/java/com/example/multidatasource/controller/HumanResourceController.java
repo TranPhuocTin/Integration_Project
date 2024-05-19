@@ -1,5 +1,6 @@
 package com.example.multidatasource.controller;
 
+import com.example.multidatasource.entity.sqlsever.BenefitPlanEntity;
 import com.example.multidatasource.entity.sqlsever.EmploymentWorkingTimeEntity;
 import com.example.multidatasource.entity.sqlsever.JobHistoryEntity;
 import com.example.multidatasource.entity.sqlsever.PersonalEntity;
@@ -53,5 +54,10 @@ public class HumanResourceController {
     @GetMapping("/get-all-employment-working-time")
     public ResponseEntity<List<EmploymentWorkingTimeEntity>> getAllEmploymentWorkingTime(){
         return ResponseEntity.ok(humanresourceService.getAllEmploymentWorkingTime());
+    }
+
+    @GetMapping("/get-all-benefit-plans")
+    public ResponseEntity<List<BenefitPlanEntity>> getAllBenefitPlans(){
+        return ResponseEntity.ok(humanresourceService.findAllBenefitPlans());
     }
 }

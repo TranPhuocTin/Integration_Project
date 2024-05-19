@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface PersonalRepository extends JpaRepository<PersonalEntity, Integer> {
     void deleteByPersonalId(int personalId);
-    PersonalEntity findByPersonalId(int personalId);
 }

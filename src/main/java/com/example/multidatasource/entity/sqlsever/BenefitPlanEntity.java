@@ -32,4 +32,8 @@ public class BenefitPlanEntity {
 
     @Column(name = "PERCENTAGE_COPAY")
     private Long percentageCopay;
+
+    public String getPlanName() {
+        return planName != null ? planName.trim() : null;
+    }
 }

@@ -60,5 +60,10 @@ public class PayrollServiceImp implements PayrollService {
         return employeeRepository.save(employeeEntity);
     }
 
+    @Override
+    public List<PayRateEntity> getAllPayRates() {
+        return payRateRepository.findAll();
+    }
+
 
 }

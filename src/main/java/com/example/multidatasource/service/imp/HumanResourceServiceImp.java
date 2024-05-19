@@ -117,5 +117,10 @@ public class HumanResourceServiceImp implements HumanResourceService {
         return benefitPlanRepo.findByBenefitPlansId(id);
     }
 
+    @Override
+    public List<BenefitPlanEntity> findAllBenefitPlans() {
+        return benefitPlanRepo.findAll();
+    }
+
 
 }

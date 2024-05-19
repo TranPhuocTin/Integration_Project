@@ -23,13 +23,13 @@ public class EmploymentEntity {
     @Column(name = "EMPLOYMENT_CODE", length = 50)
     private String employmentCode;
 
-    @Column(name = "EMPLOYMENT_STATUS", length = 10)
+    @Column(name = "EMPLOYMENT_STATUS")
     private String employmentStatus;
 
     @Column(name = "HIRE_DATE_FOR_WORKING")
     private Date hireDateForWorking;
 
-    @Column(name = "WORKERS_COMP_CODE", length = 10)
+    @Column(name = "WORKERS_COMP_CODE")
     private String workersCompCode;
 
     @Column(name = "TERMINATION_DATE")
@@ -46,5 +46,13 @@ public class EmploymentEntity {
 
     @Column(name = "PERSONAL_ID")
     private int personal;
+
+    public String getEmploymentStatus() {
+        return employmentStatus != null ? employmentStatus.trim() : null;
+    }
+
+    public String getWorkersCompCode() {
+        return workersCompCode != null ? workersCompCode.trim() : null;
+    }
 
 }

@@ -15,5 +15,4 @@ public interface EmploymentWorkingTimeRepository extends JpaRepository<Employmen
     List<EmploymentWorkingTimeEntity> findAllBy();
 
     EmploymentWorkingTimeEntity findByEmploymentWorkingTimeId(Long id);
-    EmploymentWorkingTimeEntity findByEmployment(EmploymentEntity employment);
 }
