@@ -1,6 +1,7 @@
 package com.example.multidatasource.service.imp;
 
 import com.example.multidatasource.entity.sqlsever.*;
+import com.example.multidatasource.payload.BenefitPlanChangeDTO;
 import com.example.multidatasource.payload.MergePersonDTO;
 import com.example.multidatasource.entity.mysql.EmployeeEntity;
 import com.example.multidatasource.entity.mysql.PayRateEntity;
@@ -17,7 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.BeanUtils;
 
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -59,7 +65,7 @@ public class MergeServiceImp implements MergeService {
             }
         }
 
-        return returnValue;
+        return readBenefitPlanChangesFromFile(returnValue);
     }
 
     @Override
@@ -119,6 +125,8 @@ public class MergeServiceImp implements MergeService {
         BenefitPlanEntity benefitPlanUpdate = humanResourceService.findByBenefitPlansId(updateBenefitAndPayrateDTO.getBenefitPlansId());
         PayRateEntity payRateEntityUpdate = payrollService.findByIdPayRates(updateBenefitAndPayrateDTO.getIdPayRates());
 
+        writeBenefitPlanChangesToFile(id, updateBenefitAndPayrateDTO, personalEntity.getBenefitPlan());
+
         employeeEntity.setPayRates(payRateEntityUpdate);
 
         personalEntity.setBenefitPlan(benefitPlanUpdate);
@@ -166,6 +174,93 @@ public class MergeServiceImp implements MergeService {
             else return "Cannot find EmploymentEntity with id: " + updateEmploymentDetailsDTO.getEmploymentId();
         }
         return "No employment details found";
+    }
+
+    @Override
+    public void writeBenefitPlanChangesToFile(int personalId, UpdateBenefitAndPayRateDTO updateBenefitAndPayrateDTO, BenefitPlanEntity oldBenefitPlan) {
+        // Get old benefit plan name
+        String oldPlanName = oldBenefitPlan.getPlanName();
+        // Get new benefit plan name
+        BenefitPlanEntity newBenefitPlan = humanResourceService.findByBenefitPlansId(updateBenefitAndPayrateDTO.getBenefitPlansId());
+        String newPlanName = newBenefitPlan.getPlanName();
+        // Get current date
+        LocalDate localDate = LocalDate.now();
+        Date changeDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = formatter.format(changeDate);
+        String newLine = personalId + " " + oldPlanName + " " + newPlanName + " " + formattedDate;
+
+        try {
+            List<String> lines = new ArrayList<>();
+            File file = new File("benefitPlanChanges.txt");
+            if (file.exists()) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    boolean found = false;
+                    while ((line = reader.readLine()) != null) {
+                        String[] parts = line.split(" ");
+                        if (Integer.parseInt(parts[0]) == personalId) {
+                            lines.add(newLine);
+                            found = true;
+                        } else {
+                            lines.add(line);
+                        }
+                    }
+                    if (!found) {
+                        lines.add(newLine);
+                    }
+                }
+            } else {
+                lines.add(newLine);
+            }
+
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file, false))) {
+                for (String line : lines) {
+                    writer.println(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<MergePersonDTO> readBenefitPlanChangesFromFile(List<MergePersonDTO> mergePersonDTOList) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("benefitPlanChanges.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" "); // Assuming the fields are separated by dashes
+
+                int personalId = Integer.parseInt(parts[0]);
+                String oldPlanName = parts[1];
+                String newPlanName = parts[2];
+
+                // Assuming the date is the fourth field and is in the format "dd-MM-yyyy"
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                String changeDate = parts[3];
+
+                BenefitPlanChangeDTO benefitPlanChangeDTO = new BenefitPlanChangeDTO(oldPlanName, newPlanName, changeDate);
+
+                MergePersonDTO mergePersonDTO = mergePersonDTOList.stream()
+                        .filter(m -> m.getPersonalId() == personalId)
+                        .findFirst()
+                        .orElse(null);
+
+                if (mergePersonDTO != null) {
+                    // If a MergePersonDTO with the same personalId already exists, update its benefitPlanHistory field
+                    mergePersonDTO.setBenefitPlanHistory(benefitPlanChangeDTO);
+                } else {
+                    // If no MergePersonDTO with the same personalId exists, create a new one and add it to the list
+                    mergePersonDTO = new MergePersonDTO();
+                    mergePersonDTO.setPersonalId(personalId);
+                    mergePersonDTO.setBenefitPlanHistory(benefitPlanChangeDTO);
+                    mergePersonDTOList.add(mergePersonDTO);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mergePersonDTOList;
     }
 
 

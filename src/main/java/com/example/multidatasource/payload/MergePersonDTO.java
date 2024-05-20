@@ -41,4 +41,5 @@ public class MergePersonDTO {
     private BenefitPlanEntity benefitPlan;
     private PayRateEntity payRates;
     private List<EmploymentEntity> employmentEntityList;
+    private BenefitPlanChangeDTO benefitPlanHistory;
 }
